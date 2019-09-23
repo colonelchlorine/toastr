@@ -12,7 +12,7 @@
  */
 /* global define */
 (function (define) {
-    define(['jquery'], function ($) {
+    define([], function ($) {
         return (function () {
             var $container;
             var listener;
@@ -55,8 +55,8 @@
 
             function getContainer(options, create) {
                 if (!options) { options = getOptions(); }
-                $container = $('#' + options.containerId);
-                if ($container.length) {
+                $container = document.getElementById('#' + options.containerId);
+                if ($container) {
                     return $container;
                 }
                 if (create) {
@@ -142,11 +142,10 @@
             }
 
             function createContainer(options) {
-                $container = $('<div/>')
-                    .attr('id', options.containerId)
-                    .addClass(options.positionClass);
-
-                $container.appendTo($(options.target));
+                $container = document.createElement("div");
+                $container.id = options.containerId;
+                $container.addClass(options.positionClass);
+                document.getElementById(options.target).append($container);
                 return $container;
             }
 
@@ -204,7 +203,11 @@
                 var iconClass = map.iconClass || options.iconClass;
 
                 if (typeof (map.optionsOverride) !== 'undefined') {
-                    options = $.extend(options, map.optionsOverride);
+                    let m = map.optionsOverride;
+                    options = {
+                        ...options,
+                        m
+                    };
                     iconClass = map.optionsOverride.iconClass || iconClass;
                 }
 
@@ -215,10 +218,10 @@
                 $container = getContainer(options, true);
 
                 var intervalId = null;
-                var $toastElement = $('<div/>');
-                var $titleElement = $('<div/>');
-                var $messageElement = $('<div/>');
-                var $progressElement = $('<div/>');
+                var $toastElement = document.createElement("div");
+                var $titleElement = document.createElement("div");
+                var $messageElement = document.createElement("div");
+                var $progressElement = document.createElement("div");
                 var $closeElement = $(options.closeHtml);
                 var progressBar = {
                     intervalId: null,
@@ -449,7 +452,11 @@
             }
 
             function getOptions() {
-                return $.extend({}, getDefaults(), toastr.options);
+                let t = toastr.options;
+                return {
+                    ...getDefaults(),
+                    t
+                };
             }
 
             function removeToast($toastElement) {
